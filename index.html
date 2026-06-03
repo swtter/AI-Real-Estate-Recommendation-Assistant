@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Property Recommendation Prototype</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="filter-panel">
+      <div class="brand">
+        <span class="brand-mark">PR</span>
+        <div>
+          <h1>Property Finder</h1>
+          <p>AI property recommendation prototype</p>
+        </div>
+      </div>
+
+      <form id="filterForm" class="filters">
+        <label for="propertyType">Property type</label>
+        <select id="propertyType">
+          <option value="">Any type</option>
+          <option value="Apartment">Apartment</option>
+          <option value="House">House</option>
+          <option value="Townhouse">Townhouse</option>
+        </select>
+
+        <label for="roomType">Room type</label>
+        <select id="roomType">
+          <option value="">Any room type</option>
+          <option value="1B1B">1B1B</option>
+          <option value="2B1B">2B1B</option>
+          <option value="2B2B">2B2B</option>
+          <option value="3B2B">3B2B</option>
+        </select>
+
+        <label for="suburb">Suburb / location</label>
+        <select id="suburb">
+          <option value="">Any suburb</option>
+        </select>
+
+        <label for="budget">Maximum weekly rent</label>
+        <div class="budget-row">
+          <input type="range" id="budget" min="350" max="1200" step="50" value="1200">
+          <span id="budgetValue">$1200</span>
+        </div>
+
+        <div class="filter-actions">
+          <button type="submit">Apply filters</button>
+          <button type="button" id="resetBtn" class="secondary-button">Reset</button>
+        </div>
+      </form>
+    </aside>
+
+    <main class="main-content">
+      <section class="map-section">
+        <div id="map"></div>
+      </section>
+
+      <section class="list-section">
+        <div class="list-header">
+          <div>
+            <h2>Matching properties</h2>
+            <p id="resultCount">Loading properties...</p>
+          </div>
+        </div>
+        <div id="propertyList" class="property-grid"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
