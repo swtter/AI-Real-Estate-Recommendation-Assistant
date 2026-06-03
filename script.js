@@ -12,6 +12,9 @@ const roomTypeFilter = document.getElementById("roomType");
 const suburbFilter = document.getElementById("suburb");
 const minBudgetFilter = document.getElementById("minBudget");
 const maxBudgetFilter = document.getElementById("maxBudget");
+const petFriendlyFilter = document.getElementById("petFriendly");
+const schoolZoneFilter = document.getElementById("schoolZone");
+const maxCommuteFilter = document.getElementById("maxCommute");
 const resetBtn = document.getElementById("resetBtn");
 const mapStatus = document.getElementById("mapStatus");
 
@@ -28,15 +31,14 @@ async function initApp() {
     }
 
     properties = await response.json();
-    filteredProperties = properties;
     populateSuburbOptions();
     setBudgetDefaults();
-    renderProperties();
-    renderMarkers();
-    fitMapToProperties(filteredProperties);
+    setCommuteDefault();
+    applyFilters();
   } catch (error) {
     propertyList.innerHTML = '<div class="empty-state">Could not load property data. Please run this project through a local server.</div>';
     resultCount.textContent = "No data loaded";
+    mapStatus.textContent = "Property data unavailable";
     console.error("Property data loading failed:", error);
   }
 }
@@ -62,7 +64,10 @@ function bindEvents() {
     propertyTypeFilter.value = "";
     roomTypeFilter.value = "";
     suburbFilter.value = "";
+    petFriendlyFilter.value = "";
+    schoolZoneFilter.value = "";
     setBudgetDefaults();
+    setCommuteDefault();
     applyFilters();
   });
 }
@@ -92,27 +97,30 @@ function setBudgetDefaults() {
   maxBudgetFilter.value = maxRent;
 }
 
+function setCommuteDefault() {
+  const longestCommute = Math.max(...properties.map((property) => property.commuteTime));
+  maxCommuteFilter.max = Math.ceil(longestCommute / 5) * 5;
+  maxCommuteFilter.value = maxCommuteFilter.max;
+}
+
 function applyFilters() {
-  const selectedPropertyType = propertyTypeFilter.value;
-  const selectedRoomType = roomTypeFilter.value;
-  const selectedSuburb = suburbFilter.value;
-  const { minBudget, maxBudget } = getBudgetRange();
+  const preferences = getPreferences();
 
-  filteredProperties = properties.filter((property) => {
-    const matchesPropertyType = !selectedPropertyType || property.propertyType === selectedPropertyType;
-    const matchesRoomType = !selectedRoomType || property.roomType === selectedRoomType;
-    const matchesSuburb = !selectedSuburb || property.suburb === selectedSuburb;
-    const matchesBudget = property.weeklyRent >= minBudget && property.weeklyRent <= maxBudget;
-
-    return matchesPropertyType && matchesRoomType && matchesSuburb && matchesBudget;
-  });
+  filteredProperties = properties
+    .map((property) => ({
+      ...property,
+      matchScore: calculateMatchScore(property, preferences),
+      matchExplanation: buildMatchExplanation(property, preferences)
+    }))
+    .filter((property) => isVisibleMatch(property, preferences))
+    .sort((a, b) => b.matchScore - a.matchScore || a.weeklyRent - b.weeklyRent);
 
   renderProperties();
   renderMarkers();
   fitMapToProperties(filteredProperties);
 }
 
-function getBudgetRange() {
+function getPreferences() {
   let minBudget = Number(minBudgetFilter.value);
   let maxBudget = Number(maxBudgetFilter.value);
 
@@ -122,17 +130,119 @@ function getBudgetRange() {
     maxBudgetFilter.value = maxBudget;
   }
 
-  return { minBudget, maxBudget };
+  return {
+    propertyType: propertyTypeFilter.value,
+    roomType: roomTypeFilter.value,
+    suburb: suburbFilter.value,
+    minBudget,
+    maxBudget,
+    petFriendly: petFriendlyFilter.value,
+    schoolZone: schoolZoneFilter.value,
+    maxCommute: Number(maxCommuteFilter.value)
+  };
+}
+
+function isVisibleMatch(property, preferences) {
+  const matchesPropertyType = !preferences.propertyType || property.propertyType === preferences.propertyType;
+  const matchesRoomType = !preferences.roomType || property.roomType === preferences.roomType;
+  const matchesSuburb = !preferences.suburb || property.suburb === preferences.suburb;
+  const matchesBudget = property.weeklyRent >= preferences.minBudget && property.weeklyRent <= preferences.maxBudget;
+  const matchesPet = !preferences.petFriendly || property.petFriendly === preferences.petFriendly;
+  const matchesSchool = !preferences.schoolZone || property.schoolZone === preferences.schoolZone;
+  const matchesCommute = property.commuteTime <= preferences.maxCommute;
+
+  return matchesPropertyType && matchesRoomType && matchesSuburb && matchesBudget && matchesPet && matchesSchool && matchesCommute;
+}
+
+function calculateMatchScore(property, preferences) {
+  const budgetScore = getBudgetScore(property.weeklyRent, preferences.minBudget, preferences.maxBudget);
+  const commuteScore = getCommuteScore(property.commuteTime, preferences.maxCommute);
+  const scores = [
+    { weight: budgetScore, matched: true },
+    { weight: 15, matched: !preferences.propertyType || property.propertyType === preferences.propertyType },
+    { weight: 15, matched: !preferences.roomType || property.roomType === preferences.roomType },
+    { weight: 10, matched: !preferences.suburb || property.suburb === preferences.suburb },
+    { weight: 10, matched: !preferences.petFriendly || property.petFriendly === preferences.petFriendly },
+    { weight: 10, matched: !preferences.schoolZone || property.schoolZone === preferences.schoolZone },
+    { weight: commuteScore, matched: true }
+  ];
+
+  return scores.reduce((total, item) => total + (item.matched ? item.weight : 0), 0);
+}
+
+function getBudgetScore(rent, minBudget, maxBudget) {
+  if (rent < minBudget || rent > maxBudget) {
+    return 0;
+  }
+
+  const range = Math.max(maxBudget - minBudget, 1);
+  const position = (rent - minBudget) / range;
+  return Math.round(15 + (1 - position) * 10);
+}
+
+function getCommuteScore(commuteTime, maxCommute) {
+  if (commuteTime > maxCommute) {
+    return 0;
+  }
+
+  const commuteRatio = commuteTime / Math.max(maxCommute, 1);
+  return Math.round(5 + (1 - commuteRatio) * 10);
+}
+
+function buildMatchExplanation(property, preferences) {
+  const reasons = [];
+
+  if (property.weeklyRent >= preferences.minBudget && property.weeklyRent <= preferences.maxBudget) {
+    reasons.push("budget");
+  }
+  if (preferences.roomType && property.roomType === preferences.roomType) {
+    reasons.push("room type");
+  }
+  if (preferences.propertyType && property.propertyType === preferences.propertyType) {
+    reasons.push("property type");
+  }
+  if (preferences.suburb && property.suburb === preferences.suburb) {
+    reasons.push("location");
+  }
+  if (preferences.petFriendly && property.petFriendly === preferences.petFriendly) {
+    reasons.push("pet preference");
+  }
+  if (preferences.schoolZone && property.schoolZone === preferences.schoolZone) {
+    reasons.push("school zone");
+  }
+  if (property.commuteTime <= preferences.maxCommute) {
+    reasons.push("commute");
+  }
+
+  const topReasons = reasons.slice(0, 3);
+
+  if (topReasons.length === 0) {
+    return "Potential match based on the current search settings.";
+  }
+
+  return `Good match for your ${formatReasonList(topReasons)} preference${topReasons.length === 1 ? "" : "s"}.`;
+}
+
+function formatReasonList(items) {
+  if (items.length === 1) {
+    return items[0];
+  }
+
+  if (items.length === 2) {
+    return `${items[0]} and ${items[1]}`;
+  }
+
+  return `${items[0]}, ${items[1]}, and ${items[2]}`;
 }
 
 function renderProperties() {
   propertyList.innerHTML = "";
 
-  resultCount.textContent = `${filteredProperties.length} property${filteredProperties.length === 1 ? "" : "ies"} found`;
-  mapStatus.textContent = `${filteredProperties.length} marker${filteredProperties.length === 1 ? "" : "s"} shown on the map`;
+  resultCount.textContent = `${filteredProperties.length} recommended propert${filteredProperties.length === 1 ? "y" : "ies"} found`;
+  mapStatus.textContent = `${filteredProperties.length} marker${filteredProperties.length === 1 ? "" : "s"} shown by match score`;
 
   if (filteredProperties.length === 0) {
-    propertyList.innerHTML = '<div class="empty-state">No matching properties found. Try changing your filters.</div>';
+    propertyList.innerHTML = '<div class="empty-state">No matching properties found. Try changing your recommendation filters.</div>';
     return;
   }
 
@@ -148,10 +258,21 @@ function renderProperties() {
           <span class="price">${formatRent(property.weeklyRent)}</span>
         </div>
         <p class="location">${property.suburb}</p>
+        <div class="score-row">
+          <span class="match-score">Match Score: ${property.matchScore}%</span>
+          <span class="commute">${property.commuteTime} min commute</span>
+        </div>
+        <p class="description">${property.shortDescription}</p>
         <div class="tags">
           <span class="tag">${property.propertyType}</span>
           <span class="tag room">${property.roomType}</span>
+          <span class="tag">${property.bedrooms} bed</span>
+          <span class="tag">${property.bathrooms} bath</span>
+          <span class="tag">${property.parking} parking</span>
+          <span class="tag">Pet: ${property.petFriendly}</span>
+          <span class="tag">School: ${property.schoolZone}</span>
         </div>
+        <p class="explanation">${property.matchExplanation}</p>
       </div>
     `;
 
@@ -168,7 +289,7 @@ function renderMarkers() {
     const marker = L.marker([property.latitude, property.longitude])
       .bindPopup(`
         <p class="popup-title">${property.name}</p>
-        <p class="popup-meta">${formatRent(property.weeklyRent)} | ${property.roomType}</p>
+        <p class="popup-meta">${formatRent(property.weeklyRent)} | ${property.roomType} | ${property.matchScore}% match</p>
       `);
 
     marker.on("click", () => {
@@ -181,7 +302,7 @@ function renderMarkers() {
 }
 
 function focusProperty(propertyId, moveMap) {
-  const property = properties.find((item) => item.id === propertyId);
+  const property = filteredProperties.find((item) => item.id === propertyId);
   const marker = markerById.get(propertyId);
 
   if (!property || !marker) {
