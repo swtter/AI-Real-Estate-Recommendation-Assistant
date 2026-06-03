@@ -61,6 +61,29 @@
           </div>
         </div>
 
+        <div class="filter-group">
+          <label for="petFriendly">Pet Friendly Required</label>
+          <select id="petFriendly">
+            <option value="">Any</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="schoolZone">School Zone Required</label>
+          <select id="schoolZone">
+            <option value="">Any</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="maxCommute">Maximum Commute Time</label>
+          <input type="number" id="maxCommute" min="5" max="90" step="5" value="60">
+        </div>
+
         <div class="filter-actions">
           <button type="submit">Apply filters</button>
           <button type="button" id="resetBtn" class="secondary-button">Reset</button>
