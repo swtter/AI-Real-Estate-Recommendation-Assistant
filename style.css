@@ -273,10 +273,49 @@ button:hover {
   white-space: nowrap;
 }
 
+.score-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.match-score {
+  padding: 7px 10px;
+  color: #ffffff;
+  background: var(--accent);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.commute {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .location {
   margin: 0 0 14px;
   color: var(--muted);
   font-size: 14px;
+}
+
+.description {
+  margin: 0 0 12px;
+  color: #3e4f55;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.explanation {
+  margin: 12px 0 0;
+  color: var(--accent-dark);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
 }
 
 .tags {
