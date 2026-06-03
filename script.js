@@ -10,9 +10,10 @@ const filterForm = document.getElementById("filterForm");
 const propertyTypeFilter = document.getElementById("propertyType");
 const roomTypeFilter = document.getElementById("roomType");
 const suburbFilter = document.getElementById("suburb");
-const budgetFilter = document.getElementById("budget");
-const budgetValue = document.getElementById("budgetValue");
+const minBudgetFilter = document.getElementById("minBudget");
+const maxBudgetFilter = document.getElementById("maxBudget");
 const resetBtn = document.getElementById("resetBtn");
+const mapStatus = document.getElementById("mapStatus");
 
 document.addEventListener("DOMContentLoaded", initApp);
 
@@ -22,9 +23,14 @@ async function initApp() {
 
   try {
     const response = await fetch("properties.json");
+    if (!response.ok) {
+      throw new Error("Property data request failed");
+    }
+
     properties = await response.json();
     filteredProperties = properties;
     populateSuburbOptions();
+    setBudgetDefaults();
     renderProperties();
     renderMarkers();
     fitMapToProperties(filteredProperties);
@@ -52,21 +58,17 @@ function bindEvents() {
     applyFilters();
   });
 
-  budgetFilter.addEventListener("input", () => {
-    budgetValue.textContent = `$${budgetFilter.value}`;
-  });
-
   resetBtn.addEventListener("click", () => {
     propertyTypeFilter.value = "";
     roomTypeFilter.value = "";
     suburbFilter.value = "";
-    budgetFilter.value = budgetFilter.max;
-    budgetValue.textContent = `$${budgetFilter.value}`;
+    setBudgetDefaults();
     applyFilters();
   });
 }
 
 function populateSuburbOptions() {
+  suburbFilter.innerHTML = '<option value="">Any suburb</option>';
   const suburbs = [...new Set(properties.map((property) => property.suburb))].sort();
 
   suburbs.forEach((suburb) => {
@@ -77,17 +79,30 @@ function populateSuburbOptions() {
   });
 }
 
+function setBudgetDefaults() {
+  const rents = properties.map((property) => property.weeklyRent);
+  const minRent = Math.floor(Math.min(...rents) / 50) * 50;
+  const maxRent = Math.ceil(Math.max(...rents) / 50) * 50;
+
+  minBudgetFilter.min = minRent;
+  minBudgetFilter.max = maxRent;
+  minBudgetFilter.value = minRent;
+  maxBudgetFilter.min = minRent;
+  maxBudgetFilter.max = maxRent;
+  maxBudgetFilter.value = maxRent;
+}
+
 function applyFilters() {
   const selectedPropertyType = propertyTypeFilter.value;
   const selectedRoomType = roomTypeFilter.value;
   const selectedSuburb = suburbFilter.value;
-  const maxBudget = Number(budgetFilter.value);
+  const { minBudget, maxBudget } = getBudgetRange();
 
   filteredProperties = properties.filter((property) => {
     const matchesPropertyType = !selectedPropertyType || property.propertyType === selectedPropertyType;
     const matchesRoomType = !selectedRoomType || property.roomType === selectedRoomType;
     const matchesSuburb = !selectedSuburb || property.suburb === selectedSuburb;
-    const matchesBudget = property.weeklyRent <= maxBudget;
+    const matchesBudget = property.weeklyRent >= minBudget && property.weeklyRent <= maxBudget;
 
     return matchesPropertyType && matchesRoomType && matchesSuburb && matchesBudget;
   });
@@ -97,10 +112,24 @@ function applyFilters() {
   fitMapToProperties(filteredProperties);
 }
 
+function getBudgetRange() {
+  let minBudget = Number(minBudgetFilter.value);
+  let maxBudget = Number(maxBudgetFilter.value);
+
+  if (minBudget > maxBudget) {
+    [minBudget, maxBudget] = [maxBudget, minBudget];
+    minBudgetFilter.value = minBudget;
+    maxBudgetFilter.value = maxBudget;
+  }
+
+  return { minBudget, maxBudget };
+}
+
 function renderProperties() {
   propertyList.innerHTML = "";
 
   resultCount.textContent = `${filteredProperties.length} property${filteredProperties.length === 1 ? "" : "ies"} found`;
+  mapStatus.textContent = `${filteredProperties.length} marker${filteredProperties.length === 1 ? "" : "s"} shown on the map`;
 
   if (filteredProperties.length === 0) {
     propertyList.innerHTML = '<div class="empty-state">No matching properties found. Try changing your filters.</div>';
@@ -116,9 +145,9 @@ function renderProperties() {
       <div class="card-body">
         <div class="card-topline">
           <h3>${property.name}</h3>
-          <span class="price">$${property.weeklyRent}/wk</span>
+          <span class="price">${formatRent(property.weeklyRent)}</span>
         </div>
-        <p class="location">${property.suburb}, ${property.city}</p>
+        <p class="location">${property.suburb}</p>
         <div class="tags">
           <span class="tag">${property.propertyType}</span>
           <span class="tag room">${property.roomType}</span>
@@ -126,7 +155,7 @@ function renderProperties() {
       </div>
     `;
 
-    card.addEventListener("click", () => focusProperty(property.id));
+    card.addEventListener("click", () => focusProperty(property.id, true));
     propertyList.appendChild(card);
   });
 }
@@ -139,15 +168,19 @@ function renderMarkers() {
     const marker = L.marker([property.latitude, property.longitude])
       .bindPopup(`
         <p class="popup-title">${property.name}</p>
-        <p class="popup-meta">$${property.weeklyRent}/wk | ${property.roomType}</p>
+        <p class="popup-meta">${formatRent(property.weeklyRent)} | ${property.roomType}</p>
       `);
+
+    marker.on("click", () => {
+      activatePropertyCard(property.id, true);
+    });
 
     marker.addTo(markersLayer);
     markerById.set(property.id, marker);
   });
 }
 
-function focusProperty(propertyId) {
+function focusProperty(propertyId, moveMap) {
   const property = properties.find((item) => item.id === propertyId);
   const marker = markerById.get(propertyId);
 
@@ -155,12 +188,24 @@ function focusProperty(propertyId) {
     return;
   }
 
-  document.querySelectorAll(".property-card").forEach((card) => {
-    card.classList.toggle("active", card.dataset.id === propertyId);
-  });
+  activatePropertyCard(propertyId, false);
 
-  map.setView([property.latitude, property.longitude], 15, { animate: true });
+  if (moveMap) {
+    map.setView([property.latitude, property.longitude], 15, { animate: true });
+  }
+
   marker.openPopup();
+}
+
+function activatePropertyCard(propertyId, scrollToCard) {
+  document.querySelectorAll(".property-card").forEach((card) => {
+    const isActive = card.dataset.id === propertyId;
+    card.classList.toggle("active", isActive);
+
+    if (isActive && scrollToCard) {
+      card.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  });
 }
 
 function fitMapToProperties(items) {
@@ -174,4 +219,8 @@ function fitMapToProperties(items) {
     padding: [40, 40],
     maxZoom: 14
   });
+}
+
+function formatRent(value) {
+  return `$${value.toLocaleString()}/wk`;
 }
