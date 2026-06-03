@@ -1,0 +1,110 @@
+[
+  {
+    "id": "p001",
+    "name": "Harbour View Studio",
+    "weeklyRent": 520,
+    "suburb": "Sydney CBD",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "1B1B",
+    "latitude": -33.8651,
+    "longitude": 151.2099,
+    "image": "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p002",
+    "name": "Green Square Modern Apartment",
+    "weeklyRent": 760,
+    "suburb": "Zetland",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "2B2B",
+    "latitude": -33.9069,
+    "longitude": 151.2089,
+    "image": "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p003",
+    "name": "Quiet Family House",
+    "weeklyRent": 920,
+    "suburb": "Chatswood",
+    "city": "Sydney",
+    "propertyType": "House",
+    "roomType": "3B2B",
+    "latitude": -33.7969,
+    "longitude": 151.1839,
+    "image": "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p004",
+    "name": "Inner West Townhouse",
+    "weeklyRent": 840,
+    "suburb": "Newtown",
+    "city": "Sydney",
+    "propertyType": "Townhouse",
+    "roomType": "2B1B",
+    "latitude": -33.8983,
+    "longitude": 151.1776,
+    "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p005",
+    "name": "Parramatta Riverside Apartment",
+    "weeklyRent": 610,
+    "suburb": "Parramatta",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "1B1B",
+    "latitude": -33.8136,
+    "longitude": 151.0034,
+    "image": "https://images.unsplash.com/photo-1493809842364-78817add7ffb?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p006",
+    "name": "Coastal Light Apartment",
+    "weeklyRent": 980,
+    "suburb": "Bondi",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "2B2B",
+    "latitude": -33.8915,
+    "longitude": 151.2767,
+    "image": "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p007",
+    "name": "North Shore Townhouse",
+    "weeklyRent": 890,
+    "suburb": "St Leonards",
+    "city": "Sydney",
+    "propertyType": "Townhouse",
+    "roomType": "3B2B",
+    "latitude": -33.8233,
+    "longitude": 151.1987,
+    "image": "https://images.unsplash.com/photo-1605276374104-dee2a0ed3cd6?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p008",
+    "name": "Budget Friendly Share-Style Unit",
+    "weeklyRent": 430,
+    "suburb": "Burwood",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "2B1B",
+    "latitude": -33.8774,
+    "longitude": 151.1034,
+    "image": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p009",
+    "name": "Garden House Near Station",
+    "weeklyRent": 1060,
+    "suburb": "Strathfield",
+    "city": "Sydney",
+    "propertyType": "House",
+    "roomType": "3B2B",
+    "latitude": -33.8717,
+    "longitude": 151.0949,
+    "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=80"
+  }
+]
