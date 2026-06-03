@@ -106,5 +106,89 @@
     "latitude": -33.8717,
     "longitude": 151.0949,
     "image": "https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p010",
+    "name": "Surry Hills Warehouse Loft",
+    "weeklyRent": 720,
+    "suburb": "Surry Hills",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "1B1B",
+    "latitude": -33.8846,
+    "longitude": 151.2123,
+    "image": "https://images.unsplash.com/photo-1554995207-c18c203602cb?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p011",
+    "name": "Marrickville Courtyard Townhouse",
+    "weeklyRent": 870,
+    "suburb": "Marrickville",
+    "city": "Sydney",
+    "propertyType": "Townhouse",
+    "roomType": "2B2B",
+    "latitude": -33.9106,
+    "longitude": 151.1558,
+    "image": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p012",
+    "name": "Manly Beachside Apartment",
+    "weeklyRent": 1150,
+    "suburb": "Manly",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "2B2B",
+    "latitude": -33.7963,
+    "longitude": 151.2850,
+    "image": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p013",
+    "name": "Ashfield Character House",
+    "weeklyRent": 780,
+    "suburb": "Ashfield",
+    "city": "Sydney",
+    "propertyType": "House",
+    "roomType": "2B1B",
+    "latitude": -33.8881,
+    "longitude": 151.1244,
+    "image": "https://images.unsplash.com/photo-1598228723793-52759bba239c?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p014",
+    "name": "Rhodes Waterfront Residence",
+    "weeklyRent": 940,
+    "suburb": "Rhodes",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "3B2B",
+    "latitude": -33.8296,
+    "longitude": 151.0858,
+    "image": "https://images.unsplash.com/photo-1560185009-dddeb820c7b7?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p015",
+    "name": "Randwick Parkside Home",
+    "weeklyRent": 1180,
+    "suburb": "Randwick",
+    "city": "Sydney",
+    "propertyType": "House",
+    "roomType": "3B2B",
+    "latitude": -33.9173,
+    "longitude": 151.2410,
+    "image": "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    "id": "p016",
+    "name": "Redfern Compact City Apartment",
+    "weeklyRent": 560,
+    "suburb": "Redfern",
+    "city": "Sydney",
+    "propertyType": "Apartment",
+    "roomType": "1B1B",
+    "latitude": -33.8928,
+    "longitude": 151.2041,
+    "image": "https://images.unsplash.com/photo-1560185127-6ed189bf02f4?auto=format&fit=crop&w=900&q=80"
   }
 ]
