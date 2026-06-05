@@ -2,30 +2,32 @@
 
 This project is a Streamlit-based property recommendation assistant prototype for a data analyst internship final project.
 
-The app helps prospective renters or buyers filter properties and view ranked recommendations based on budget, location, room type, pet preference, school zone preference, and commute time.
+The customer-facing app helps prospective renters or buyers filter properties and view ranked recommendations based on budget, location, room type, pet preference, school zone preference, and commute time. Evaluation pages still exist for assessment, but they are hidden behind an Admin / Evaluation control in the sidebar.
 
 ## Project Structure
 
 ```text
 AI-Property-Recommendation-Assistant/
-├── app.py
-├── data/properties.csv
-├── pages/
-│   ├── 1_Property_Search.py
-│   ├── 2_User_Testing.py
-│   └── 3_Project_Analytics.py
-├── utils/
-│   ├── data_loader.py
-│   ├── recommendation_engine.py
-│   └── map_utils.py
-├── assets/property_images/
-├── requirements.txt
-└── README.md
+|-- app.py
+|-- data/properties.csv
+|-- pages/
+|   |-- 1_Property_Search.py
+|   |-- 2_User_Testing.py
+|   `-- 3_Project_Analytics.py
+|-- utils/
+|   |-- data_loader.py
+|   |-- recommendation_engine.py
+|   `-- map_utils.py
+|-- assets/property_images/
+|-- requirements.txt
+`-- README.md
 ```
 
 ## Features
 
 - Streamlit frontend
+- Customer-first property recommendation experience
+- Admin / Evaluation area for assessment pages
 - Folium map embedded with `streamlit-folium`
 - Property data stored in `data/properties.csv`
 - Filters for budget, property type, room type, suburb, pet friendly, school zone, and commute time
