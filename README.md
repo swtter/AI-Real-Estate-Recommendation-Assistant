@@ -1,46 +1,60 @@
-# AI Property Recommendation Assistant Prototype
+# AI Property Recommendation Assistant
 
-This is a simple web-based property recommendation prototype for a data analyst internship final project. It uses HTML, CSS, JavaScript, Leaflet.js, and sample data from `properties.json`.
+This project is a Streamlit-based property recommendation assistant prototype for a data analyst internship final project.
+
+The app helps prospective renters or buyers filter properties and view ranked recommendations based on budget, location, room type, pet preference, school zone preference, and commute time.
+
+## Project Structure
+
+```text
+AI-Property-Recommendation-Assistant/
+├── app.py
+├── data/properties.csv
+├── pages/
+│   ├── 1_Property_Search.py
+│   ├── 2_User_Testing.py
+│   └── 3_Project_Analytics.py
+├── utils/
+│   ├── data_loader.py
+│   ├── recommendation_engine.py
+│   └── map_utils.py
+├── assets/property_images/
+├── requirements.txt
+└── README.md
+```
 
 ## Features
 
-- Property listing cards with images, rent, suburb, type, room type, bedrooms, bathrooms, parking, and short descriptions
-- Interactive Leaflet map with property markers
-- Filters for property type, room type, budget, suburb, pet-friendly requirement, school zone requirement, and commute time
-- Match score out of 100 for each visible property
-- Matching properties sorted from highest score to lowest score
-- Clicking a card moves the map to that property
-- Clicking a marker shows the property name, rent, room type, and match score
+- Streamlit frontend
+- Folium map embedded with `streamlit-folium`
+- Property data stored in `data/properties.csv`
+- Filters for budget, property type, room type, suburb, pet friendly, school zone, and commute time
+- Match score out of 100
+- Properties sorted by match score
+- Property cards with image, name, price, suburb, room type, and score
+- User testing page for collecting satisfaction scores
+- Project analytics page with feedback charts
 
 ## How To Run Locally
 
-Open a terminal in the project folder and run:
+Install dependencies:
 
 ```bash
-python -m http.server 8000
+pip install -r requirements.txt
 ```
 
-Then open this address in your browser:
+Run the Streamlit app:
+
+```bash
+streamlit run app.py
+```
+
+Streamlit will open the app in your browser. If it does not open automatically, use the local URL shown in the terminal, usually:
 
 ```text
-http://localhost:8000
+http://localhost:8501
 ```
 
-If you are using GitHub Codespaces, run the same command in the terminal and open the forwarded port `8000`.
+## Notes
 
-## Why Use A Local Server?
-
-The website loads property data with JavaScript using:
-
-```js
-fetch("properties.json")
-```
-
-Most browsers block or limit `fetch()` requests when opening `index.html` directly from your computer as a local file. Running a local server makes the project behave like a normal website, so `properties.json`, Leaflet, the map, and the property cards load correctly.
-
-## Project Files
-
-- `index.html` - page structure and filter controls
-- `style.css` - modern real estate listing layout and card styles
-- `script.js` - filtering, scoring, sorting, map markers, and card interactions
-- `properties.json` - sample property data
+This is a frontend prototype only. It does not include a backend database or chatbot yet. User testing feedback is stored in Streamlit session state during the current app session.
