@@ -2,8 +2,6 @@ import pandas as pd
 import streamlit as st
 
 
-st.set_page_config(page_title="User Testing", layout="wide")
-
 st.title("User Testing")
 st.caption("Collect quick satisfaction scores from prototype testers.")
 
