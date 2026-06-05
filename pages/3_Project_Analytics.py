@@ -5,8 +5,6 @@ import streamlit as st
 from utils.data_loader import load_properties
 
 
-st.set_page_config(page_title="Project Analytics", layout="wide")
-
 st.title("Project Analytics")
 st.caption("Review property data and prototype feedback results.")
 
