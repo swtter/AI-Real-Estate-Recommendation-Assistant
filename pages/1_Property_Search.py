@@ -6,10 +6,8 @@ from utils.map_utils import build_property_map
 from utils.recommendation_engine import apply_filters_and_scores, short_match_reason
 
 
-st.set_page_config(page_title="Property Search", layout="wide")
-
-st.title("Property Search")
-st.caption("Filter properties and review AI-style ranked recommendations.")
+st.title("Find Your Best-Matched Property")
+st.caption("Adjust your preferences to see ranked homes and their locations on the map.")
 
 properties = load_properties()
 
@@ -18,7 +16,7 @@ rent_max = int(properties["weekly_rent"].max())
 commute_max = int(properties["commute_time"].max())
 
 with st.sidebar:
-    st.header("Search Filters")
+    st.header("Your Preferences")
     budget = st.slider("Budget", rent_min, rent_max, (rent_min, rent_max), step=50)
     property_type = st.selectbox(
         "Property Type",
@@ -51,7 +49,7 @@ recommendations = apply_filters_and_scores(properties, preferences)
 
 map_column, summary_column = st.columns([2, 1])
 with map_column:
-    st.subheader("Matching Properties Map")
+    st.subheader("Map View")
     st_folium(build_property_map(recommendations), width=None, height=430)
 
 with summary_column:
@@ -62,7 +60,7 @@ with summary_column:
     else:
         st.info("No properties match the current filters.")
 
-st.subheader("Recommended Properties")
+st.subheader("Property Recommendations")
 
 if recommendations.empty:
     st.warning("Try widening your budget, commute time, or location filters.")
@@ -78,7 +76,7 @@ else:
                 title_column, score_column = st.columns([3, 1])
                 with title_column:
                     st.markdown(f"### {property_row['name']}")
-                    st.write(f"{property_row['suburb']} · {property_row['property_type']} · {property_row['room_type']}")
+                    st.write(f"{property_row['suburb']} | {property_row['property_type']} | {property_row['room_type']}")
                 with score_column:
                     st.metric("Match Score", f"{int(property_row['match_score'])}%")
 
@@ -87,10 +85,10 @@ else:
                 st.caption(short_match_reason(property_row, preferences))
 
                 st.write(
-                    f"{int(property_row['bedrooms'])} bed · "
-                    f"{int(property_row['bathrooms'])} bath · "
-                    f"{int(property_row['parking'])} parking · "
-                    f"Pet friendly: {property_row['pet_friendly']} · "
-                    f"School zone: {property_row['school_zone']} · "
+                    f"{int(property_row['bedrooms'])} bed | "
+                    f"{int(property_row['bathrooms'])} bath | "
+                    f"{int(property_row['parking'])} parking | "
+                    f"Pet friendly: {property_row['pet_friendly']} | "
+                    f"School zone: {property_row['school_zone']} | "
                     f"{int(property_row['commute_time'])} min commute"
                 )
